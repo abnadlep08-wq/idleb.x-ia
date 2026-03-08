@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Idleb X IA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- الشريط الجانبي -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <h2>Idleb X IA</h2>
+            </div>
+            
+            <div class="user-info" id="userInfo">
+                <!-- ستتحقق عبر JavaScript -->
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="active" onclick="showSection('overview')">
+                    <i class="fas fa-home"></i>
+                    نظرة عامة
+                </a>
+                <a href="#" onclick="showSection('upload')">
+                    <i class="fas fa-upload"></i>
+                    رفع فيديو جديد
+                </a>
+                <a href="#" onclick="showSection('videos')">
+                    <i class="fas fa-video"></i>
+                    فيديوهاتي
+                </a>
+                <a href="#" onclick="showSection('credits')">
+                    <i class="fas fa-coins"></i>
+                    رصيدي
+                </a>
+                <a href="#" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    الإعدادات
+                </a>
+                <a href="#" onclick="window.auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    تسجيل خروج
+                </a>
+            </nav>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="dashboard-main">
+            <!-- قسم النظرة العامة -->
+            <section id="overviewSection" class="dashboard-section active">
+                <h1>مرحباً بك في لوحة التحكم</h1>
+                
+                <div class="stats-grid" id="overviewStats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="videoCount">0</div>
+                        <div class="stat-label">فيديوهات معالجة</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="creditCount">0</div>
+                        <div class="stat-label">الرصيد المتبقي</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="storageUsed">0 MB</div>
+                        <div class="stat-label">مساحة مستخدمة</div>
+                    </div>
+                </div>
+                
+                <div class="recent-videos">
+                    <h2>آخر الفيديوهات</h2>
+                    <div id="recentVideosList"></div>
+                </div>
+            </section>
+
+            <!-- قسم رفع الفيديو -->
+            <section id="uploadSection" class="dashboard-section">
+                <h1>رفع فيديو جديد</h1>
+                
+                <div class="upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>اسحب وأفلت الفيديو هنا</h3>
+                        <p>أو</p>
+                        <input type="file" id="videoFile" accept="video/*" style="display: none;">
+                        <button class="btn btn-primary" onclick="document.getElementById('videoFile').click()">
+                            اختر ملف
+                        </button>
+                        
+                        <div class="upload-info">
+                            <p><i class="fas fa-info-circle"></i> الحد الأقصى: 100 ميجابايت</p>
+                            <p><i class="fas fa-clock"></i> المدة القصوى: 5 دقائق</p>
+                        </div>
+                    </div>
+
+                    <!-- خيارات المعالجة -->
+                    <div class="processing-options">
+                        <h3>خيارات المعالجة</h3>
+                        
+                        <div class="option-group">
+                            <label>
+                                <input type="checkbox" id="enhanceOption" checked>
+                                تحسين الجودة
+                            </label>
+                            <label>
+                                <input type="checkbox" id="stabilizeOption" checked>
+                                تثبيت الفيديو
+                            </label>
+                            <label>
+                                <input type="checkbox" id="upscaleOption">
+                                رفع الدقة إلى 4K
+                            </label>
+                            <label>
+                                <input type="checkbox" id="removeNoiseOption">
+                                إزالة الضوضاء
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- شريط التقدم -->
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-status" id="progressStatus">جاري التحميل...</div>
+                    </div>
+
+                    <!-- نتيجة المعالجة -->
+                    <div class="result-container" id="resultContainer" style="display: none;">
+                        <div class="result-success">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>تمت المعالجة بنجاح!</h3>
+                        </div>
+                        <video id="resultVideo" controls></video>
+                        <div class="result-actions">
+                            <a href="#" id="downloadBtn" class="btn btn-primary" download>
+                                <i class="fas fa-download"></i> تحميل
+                            </a>
+                            <button class="btn btn-outline" onclick="resetUpload()">
+                                <i class="fas fa-redo"></i> معالجة آخر
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم فيديوهاتي -->
+            <section id="videosSection" class="dashboard-section">
+                <h1>فيديوهاتي</h1>
+                <div class="videos-grid" id="videosGrid"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+      </html>
