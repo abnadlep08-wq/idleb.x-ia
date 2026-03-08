@@ -4,24 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idleb X IA - منصة الذكاء الاصطناعي لتعديل الفيديوهات</title>
+    
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Main CSS -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <header>
+    <!-- شريط التنقل -->
+    <header class="header" id="header">
         <div class="container">
             <nav class="navbar">
-                <a href="/" class="logo">Idleb <span>X IA</span></a>
-                <div class="nav-links">
-                    <a href="#home">الرئيسية</a>
-                    <a href="#features">المميزات</a>
-                    <a href="#pricing">الباقات</a>
+                <a href="/" class="logo">
+                    <span class="logo-icon">✨</span>
+                    Idleb <span>X IA</span>
+                </a>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="#home" class="nav-link active">الرئيسية</a>
+                    <a href="#features" class="nav-link">المميزات</a>
+                    <a href="#how-it-works" class="nav-link">كيف يعمل</a>
+                    <a href="#pricing" class="nav-link">الباقات</a>
+                    <a href="#contact" class="nav-link">اتصل بنا</a>
                 </div>
-                <div class="nav-buttons">
-                    <button class="btn btn-outline" onclick="openLoginModal()">تسجيل الدخول</button>
-                    <button class="btn btn-primary" onclick="openSignupModal()">إنشاء حساب</button>
+                
+                <div class="nav-buttons" id="navButtons">
+                    <!-- ستتغير حسب حالة تسجيل الدخول -->
                 </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </nav>
         </div>
     </header>
@@ -29,46 +47,241 @@
     <!-- نافذة تسجيل الدخول المنبثقة -->
     <div id="authModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="window.auth.closeModal()">&times;</span>
+            
+            <!-- تبويبات -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab" onclick="window.auth.showLoginTab()">تسجيل دخول</button>
+                <button class="auth-tab" id="signupTab" onclick="window.auth.showSignupTab()">إنشاء حساب</button>
+            </div>
+            
+            <!-- نموذج تسجيل الدخول -->
             <div id="loginForm" class="auth-form active">
-                <h2>تسجيل الدخول</h2>
-                <form onsubmit="handleLogin(event)">
+                <form onsubmit="window.auth.handleLogin(event)">
                     <div class="form-group">
-                        <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="loginEmail" placeholder="أدخل بريدك الإلكتروني" required>
                     </div>
                     <div class="form-group">
-                        <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+                        <label>كلمة المرور</label>
+                        <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">دخول</button>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i>
+                        تسجيل الدخول
+                    </button>
                 </form>
-                <p class="auth-switch">ليس لديك حساب؟ <a href="#" onclick="showSignup()">إنشاء حساب</a></p>
             </div>
 
+            <!-- نموذج إنشاء حساب -->
             <div id="signupForm" class="auth-form">
-                <h2>إنشاء حساب جديد</h2>
-                <form onsubmit="handleSignup(event)">
+                <form onsubmit="window.auth.handleSignup(event)">
                     <div class="form-group">
-                        <input type="text" id="signupName" placeholder="الاسم الكامل" required>
+                        <label>الاسم الكامل</label>
+                        <input type="text" id="signupName" placeholder="أدخل اسمك الكامل" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="signupEmail" placeholder="البريد الإلكتروني" required>
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="signupEmail" placeholder="أدخل بريدك الإلكتروني" required>
                     </div>
                     <div class="form-group">
-                        <input type="password" id="signupPassword" placeholder="كلمة المرور" required>
+                        <label>كلمة المرور</label>
+                        <input type="password" id="signupPassword" placeholder="أدخل كلمة المرور" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">إنشاء حساب</button>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-user-plus"></i>
+                        إنشاء حساب
+                    </button>
                 </form>
-                <p class="auth-switch">لديك حساب بالفعل؟ <a href="#" onclick="showLogin()">تسجيل دخول</a></p>
             </div>
         </div>
     </div>
 
-    <!-- باقي أقسام الصفحة (Hero, Features, etc) -->
-    <section class="hero">
-        <!-- ... المحتوى ... -->
+    <!-- القسم الرئيسي مع الصورة -->
+    <section id="home" class="hero">
+        <div class="hero-background" id="heroBackground"></div>
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge">🚀 مدعوم بالذكاء الاصطناعي</span>
+                </div>
+                <h1 class="hero-title">
+                    حول فيديوهاتك إلى
+                    <span class="gradient-text">أعمال فنية</span>
+                </h1>
+                <p class="hero-description">
+                    منصة Idleb X IA تقدم لك أحدث تقنيات الذكاء الاصطناعي لتعديل وتحسين الفيديوهات 
+                    بشكل احترافي في ثوانٍ
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-large" onclick="window.auth.openSignupModal()">
+                        <i class="fas fa-rocket"></i>
+                        ابدأ مجاناً
+                    </button>
+                    <button class="btn btn-outline-light btn-large" onclick="document.getElementById('how-it-works').scrollIntoView({behavior: 'smooth'})">
+                        <i class="fas fa-play"></i>
+                        شاهد كيف يعمل
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="statVideos">0</span>
+                        <span class="stat-label">فيديو معالج</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="statUsers">0</span>
+                        <span class="stat-label">مستخدم</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="statSatisfaction">0%</span>
+                        <span class="stat-label">رضا العملاء</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
+    <!-- قسم المميزات -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">المميزات</span>
+                <h2 class="section-title">لماذا <span>Idleb X IA؟</span></h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                    <h3>ذكاء اصطناعي متطور</h3>
+                    <p>خوارزميات تعلم عميق تقدم أفضل النتائج في تعديل الفيديوهات</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>سرعة خارقة</h3>
+                    <p>معالجة فيديوهاتك في ثوانٍ بفضل البنية التحتية السحابية</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>خصوصية تامة</h3>
+                    <p>فيديوهاتك مشفرة وآمنة، ولا نشاركها مع أي طرف ثالث</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-infinity"></i></div>
+                    <h3>بدون حدود</h3>
+                    <p>معالجة غير محدودة للمشتركين في الباقة الاحترافية</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم كيف يعمل -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">كيف يعمل</span>
+                <h2 class="section-title">ثلاث خطوات لنتيجة <span>مذهلة</span></h2>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <h3>ارفع الفيديو</h3>
+                        <p>اختر الفيديو الذي تريد تعديله من جهازك</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="fas fa-magic"></i></div>
+                        <h3>اختر التأثيرات</h3>
+                        <p>اختر التأثيرات التي تريد تطبيقها</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="fas fa-download"></i></div>
+                        <h3>حمل النتيجة</h3>
+                        <p>استلم فيديو احترافي جاهز</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الباقات -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">الباقات</span>
+                <h2 class="section-title">اختر الخطة المناسبة <span>لك</span></h2>
+            </div>
+            <div class="pricing-grid" id="pricingGrid">
+                <!-- ستتحقق عبر JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم اتصل بنا -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">اتصل بنا</span>
+                <h2 class="section-title">نحن هنا <span>لنساعدك</span></h2>
+            </div>
+            <div class="contact-wrapper">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="contactName" placeholder="الاسم الكامل" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="contactEmail" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="contactMessage" placeholder="رسالتك..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">إرسال الرسالة</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- تذييل الصفحة -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">Idleb <span>X IA</span></div>
+                    <p>منصة رائدة في تعديل الفيديوهات بالذكاء الاصطناعي</p>
+                    <div class="social-links" id="socialLinks"></div>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="#home">الرئيسية</a></li>
+                        <li><a href="#features">المميزات</a></li>
+                        <li><a href="#pricing">الباقات</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>الدعم</h4>
+                    <ul>
+                        <li><a href="#">الأسئلة الشائعة</a></li>
+                        <li><a href="#">سياسة الخصوصية</a></li>
+                        <li><a href="#">شروط الاستخدام</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Idleb X IA. جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="config.js"></script>
     <script src="auth.js"></script>
+    <script src="main.js"></script>
 </body>
-</html>
+                            </html>
