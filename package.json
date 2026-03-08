@@ -1,0 +1,10 @@
+{
+  "name": "idleb-x-ia",
+  "version": "1.0.0",
+  "description": "AI Video Processing Platform",
+  "type": "module",
+  "dependencies": {
+    "magic-hour": "latest",
+    "@supabase/supabase-js": "^2.38.0"
+  }
+}
